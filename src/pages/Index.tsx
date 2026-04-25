@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import QueryInput from "@/components/QueryInput";
@@ -26,19 +25,26 @@ const Index = () => {
     setResult(null);
 
     try {
-      const { data, error } = await supabase.functions.invoke("analyze-query", {
-        body: { query, dialect },
+      const response = await fetch("http://localhost:5000/api/analyze", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query, dialect }),
       });
 
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Request failed");
+      }
 
       setResult(data);
     } catch (err: any) {
       console.error("Analysis error:", err);
       toast({
         title: "Analysis Failed",
-        description: err.message || "Failed to analyze the query. Please try again.",
+        description: err.message || "Failed to analyze the query.",
         variant: "destructive",
       });
     } finally {
@@ -82,7 +88,7 @@ const Index = () => {
           </div>
         )}
 
-        {/* Features Grid - show when no results */}
+        {/* Features Grid */}
         {!result && !isLoading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {features.map((f, i) => (
@@ -112,5 +118,3 @@ const Index = () => {
 };
 
 export default Index;
-
-
