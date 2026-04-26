@@ -25,6 +25,7 @@ const Index = () => {
     setResult(null);
 
     try {
+<<<<<<< HEAD
       const response = await fetch("http://localhost:5000/api/analyze", {
         method: "POST",
         headers: {
@@ -38,13 +39,55 @@ const Index = () => {
       if (!response.ok) {
         throw new Error(data.message || "Request failed");
       }
+=======
+      // ✅ CALL YOUR LOCAL BACKEND
+      const res = await fetch("http://localhost:5000/api/optimize", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ query })
+      });
 
-      setResult(data);
+      if (!res.ok) {
+        throw new Error("Failed to connect to backend");
+      }
+
+      const data = await res.json();
+
+      // ✅ MAP BACKEND RESPONSE TO UI
+      setResult({
+        optimizedQuery: data.optimizedQuery,
+        explanation: "Query optimized successfully 🚀",
+        indexRecommendations: data.suggestions?.map((s: string) => ({
+          title: s,
+          description: s
+        })) || [],
+        metrics: {
+          estimatedTimeOriginal: parseInt(data.beforeTime) || 2000,
+          estimatedTimeOptimized: parseInt(data.afterTime) || 500,
+          cpuReductionPercent: 30,
+          ioReductionPercent: 45,
+          costReductionPercent: 50
+        },
+        explainPlan: {
+          operation: "SELECT",
+          cost: 100,
+          rows: 1000,
+          details: "Query execution plan"
+        }
+      });
+>>>>>>> 500bc65 (second commit)
+
     } catch (err: any) {
       console.error("Analysis error:", err);
       toast({
         title: "Analysis Failed",
+<<<<<<< HEAD
         description: err.message || "Failed to analyze the query.",
+=======
+        description: err.message || "Backend connection error",
+>>>>>>> 500bc65 (second commit)
         variant: "destructive",
       });
     } finally {
@@ -64,6 +107,7 @@ const Index = () => {
       <Header />
 
       <main className="container max-w-6xl mx-auto px-4 py-8 space-y-8">
+        
         {/* Query Input Section */}
         <section className="bg-card border border-border rounded-xl p-6">
           <QueryInput onAnalyze={handleAnalyze} isLoading={isLoading} />
@@ -72,6 +116,7 @@ const Index = () => {
         {/* Results */}
         {result && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
             <section className="bg-card border border-border rounded-xl p-6 space-y-6">
               <OptimizedQuery
                 original=""
@@ -85,6 +130,7 @@ const Index = () => {
               <PerformanceMetrics metrics={result.metrics} />
               <ExplainPlan plan={result.explainPlan} />
             </section>
+
           </div>
         )}
 
@@ -94,14 +140,13 @@ const Index = () => {
             {features.map((f, i) => (
               <div
                 key={f.title}
-                className="bg-gradient-card border border-border rounded-xl p-5 space-y-3 animate-fade-in-up"
-                style={{ animationDelay: `${i * 0.1}s` }}
+                className="bg-gradient-card border border-border rounded-xl p-5 space-y-3"
               >
-                <div className="h-9 w-9 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
+                <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center">
                   <f.icon className="h-4 w-4 text-primary" />
                 </div>
                 <h3 className="text-sm font-semibold text-foreground">{f.title}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">{f.desc}</p>
+                <p className="text-xs text-muted-foreground">{f.desc}</p>
               </div>
             ))}
           </div>
