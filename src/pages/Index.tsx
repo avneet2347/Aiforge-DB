@@ -25,21 +25,6 @@ const Index = () => {
     setResult(null);
 
     try {
-<<<<<<< HEAD
-      const response = await fetch("http://localhost:5000/api/analyze", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ query, dialect }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Request failed");
-      }
-=======
       // ✅ CALL YOUR LOCAL BACKEND
       const res = await fetch("http://localhost:5000/api/optimize", {
         method: "POST",
@@ -77,17 +62,12 @@ const Index = () => {
           details: "Query execution plan"
         }
       });
->>>>>>> 500bc65 (second commit)
 
     } catch (err: any) {
       console.error("Analysis error:", err);
       toast({
         title: "Analysis Failed",
-<<<<<<< HEAD
-        description: err.message || "Failed to analyze the query.",
-=======
         description: err.message || "Backend connection error",
->>>>>>> 500bc65 (second commit)
         variant: "destructive",
       });
     } finally {
@@ -162,4 +142,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Index;  
